@@ -1,0 +1,3 @@
+/Users/heeyeon/CLionProjects/CodingTestPractice/cmake-build-debug/CMakeFiles/CodingTestPractice.dir
+/Users/heeyeon/CLionProjects/CodingTestPractice/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/heeyeon/CLionProjects/CodingTestPractice/cmake-build-debug/CMakeFiles/rebuild_cache.dir
