@@ -49,8 +49,8 @@ cmake_ninja_workdir = /Users/heeyeon/CLionProjects/CodingTestPractice/cmake-buil
 
 build cmake_object_order_depends_target_CodingTestPractice: phony || CMakeFiles/CodingTestPractice.dir
 
-build CMakeFiles/CodingTestPractice.dir/14890_new.cpp.o: CXX_COMPILER__CodingTestPractice_Debug /Users/heeyeon/CLionProjects/CodingTestPractice/14890_new.cpp || cmake_object_order_depends_target_CodingTestPractice
-  DEP_FILE = CMakeFiles/CodingTestPractice.dir/14890_new.cpp.o.d
+build CMakeFiles/CodingTestPractice.dir/14891.cpp.o: CXX_COMPILER__CodingTestPractice_Debug /Users/heeyeon/CLionProjects/CodingTestPractice/14891.cpp || cmake_object_order_depends_target_CodingTestPractice
+  DEP_FILE = CMakeFiles/CodingTestPractice.dir/14891.cpp.o.d
   FLAGS = -g -arch x86_64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk -std=gnu++14
   OBJECT_DIR = CMakeFiles/CodingTestPractice.dir
   OBJECT_FILE_DIR = CMakeFiles/CodingTestPractice.dir
@@ -63,7 +63,7 @@ build CMakeFiles/CodingTestPractice.dir/14890_new.cpp.o: CXX_COMPILER__CodingTes
 #############################################
 # Link the executable CodingTestPractice
 
-build CodingTestPractice: CXX_EXECUTABLE_LINKER__CodingTestPractice_Debug CMakeFiles/CodingTestPractice.dir/14890_new.cpp.o
+build CodingTestPractice: CXX_EXECUTABLE_LINKER__CodingTestPractice_Debug CMakeFiles/CodingTestPractice.dir/14891.cpp.o
   FLAGS = -g -arch x86_64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk
   OBJECT_DIR = CMakeFiles/CodingTestPractice.dir
   POST_BUILD = :
