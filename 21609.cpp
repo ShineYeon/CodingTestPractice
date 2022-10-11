@@ -19,19 +19,53 @@ int dy[4] = {1, -1, 0, 0};
 int rainbowMaxSize = -98765432;
 int groupMaxSize = -98765432; // 최대 블록 그룹을 계산하기 위한 maxSize
 vector<pair<int, int>> targetGroup; // 블록들을 저장할 배열 => grouping 이후에는 삭제 대상 블록그룹이 담겨 있음
+pair<int, int> targetStandard; //삭제 대상 기준 블록
 int score = 0; //점수
-bool flag = true; //그룹핑이 일어났었는지를 저장하기 위한 boolean 변수
 
+bool canGo(vector<pair<int, int>> tmpGroup, int rainbowSize, int x, int y) {
+    //for(auto group:tmpGroup) {
+    //    cout<<group.first<<" "<<group.second<<"\n";
+    //}
+    //cout<<targetGroup.size()<<"\n";
+    //cout<<groupMaxSize<<"\n";
+    //cout<<tmpGroup.size()<<"\n";
+    if(targetGroup.size() < tmpGroup.size()) { //**********************이부분!
+        //cout<<"1\n";
+        return true;
+    }
+    else if(targetGroup.size() == tmpGroup.size()) {
+        if(rainbowMaxSize < rainbowSize) {
+            //cout<<"2\n";
+            return true;
+        }
+        else if(rainbowMaxSize == rainbowSize){
+            if(targetStandard.first < x) {
+                //cout<<"3\n";
+                return true;
+            }
+            else if(targetStandard.second < y) {
+               cout<<"4\n";
+                return true;
+            }
+        }
+    }
+    //cout<<"failed\n";
+    return false;
+}
 
 void BFS(int x, int y) {
-    int color = board[x][y];
-    visited[x][y] = true;
-    queue<pair<int, int>> q;
-    q.push(make_pair(x, y));
-    vector<pair<int, int>> vp;
-    int grpSize = 1;
-    int rainbowSize = 0;
-    vp.push_back(make_pair(x, y));
+    queue<pair<int, int>> q; // bfs 위함
+    vector<pair<int, int>> tmpGroup; //현재 블록들
+    vector<pair<int, int>> tmpRainbow; //현재 블록에서 무지개 블록들
+
+    int color = board[x][y]; //지금 색깔 저장해야지
+
+    //bfs part
+    visited[x][y] = true; // 일단 true로 만들고
+    q.push(make_pair(x, y)); //push해.
+
+    tmpGroup.push_back(make_pair(x, y));
+
     while(!q.empty()) {
         int curX = q.front().first;
         int curY = q.front().second;
@@ -39,57 +73,47 @@ void BFS(int x, int y) {
         for(int k=0; k<4; k++) {
             int newX = curX+dx[k];
             int newY = curY+dy[k];
-            if(newX<0 || newX>=N || newY<0 || newY>=N) continue;
-            if(!visited[newX][newY] &&
-            board[newX][newY]!=-1 && board[newX][newY]!=DEL && (board[newX][newY] == color || board[newX][newY] == 0)) {
+            if(newX<0 || newX>=N || newY<0 || newY>=N || visited[newX][newY]) continue;
+            else if(board[newX][newY] == color || board[newX][newY] == 0) {
+                //cout<<"here\n";
                 visited[newX][newY] = true;
-               q.push(make_pair(newX, newY));
-               vp.push_back(make_pair(newX, newY));
-               grpSize += 1;
-               if (board[newX][newY] == 0)
-                   rainbowSize+=1;
+                q.push(make_pair(newX, newY));
+                tmpGroup.push_back(make_pair(newX, newY));
+                if (board[newX][newY] == 0){
+                    tmpRainbow.push_back(make_pair(newX, newY));
+                }
             }
         }
     }
-    if(groupMaxSize < grpSize){
-        targetGroup.clear();
-        groupMaxSize = grpSize;
-        rainbowMaxSize = rainbowSize;
-        targetGroup = vp;
+
+    if(canGo(tmpGroup, tmpRainbow.size(), x, y)) {
+        targetGroup = tmpGroup; //삭제할 그룹 갱신
+        targetStandard.first = x; //삭제할 그룹의 기준 블록 갱신
+        targetStandard.second = y;
+        rainbowMaxSize = tmpRainbow.size(); //rainbow size 갱신
+        groupMaxSize = tmpGroup.size();
     }
-    else if(groupMaxSize == grpSize) {
-        if(rainbowSize > rainbowMaxSize) {
-            rainbowMaxSize = rainbowSize;
-            targetGroup.clear();
-            targetGroup = vp;
-        }
+
+    for(int i=0; i<tmpRainbow.size(); i++) {
+        int tmpX = tmpRainbow[i].first;
+        int tmpY = tmpRainbow[i].second;
+        visited[tmpX][tmpY] = false;
     }
 
 }
 
-bool canGo (int x, int y) {
-    for(int k=0; k<4; k++) {
-        int nx = x+dx[k];
-        int ny = y+dy[k];
-        if(!visited[nx][ny] && board[nx][ny]!=-1)
-            return true;
-    }
-    return false;
-}
 
-void grouping () {
+bool grouping () {
     for(int i=0; i<N; i++) {
         for(int j=0; j<N; j++) {
-
-            if(!visited[i][j] && canGo(i, j) && board[i][j]!=-1) {
+            if(!visited[i][j] && board[i][j] > 0) {
                 BFS(i, j);
             }
-
         }
     }
-    cout << targetGroup.size() << "\n";
-    if(targetGroup.size() >= 2)
-        flag = true;
+    //cout<<groupMaxSize<<"\n";
+    //cout<<targetGroup.size()<<"\n";
+    return groupMaxSize>1;
 }
 
 // 찾은 블록 그룹 삭제
@@ -110,17 +134,17 @@ void autoPlay_gravity() {
     for(int i=N-2; i>=0; i--) {
         for(int j=0; j<N; j++) {
             int x = i, y = j;
-            int nx = i+1, ny = j;
             if(board[x][y] == -1 || board[x][y] == DEL)
                 continue;
-            while(1) {
-                if(board[nx][ny] != DEL) break;
-                if(nx==N) break;
-                nx += 1;
+            for(int k=i+1; k<N; k++) {
+                if(board[k][j] == DEL) {
+                    board[k][j] = board[k-1][j];
+                    board[k-1][j] = DEL;
+
+                }
+                else
+                    break;
             }
-            nx--;
-            board[nx][ny] = board[x][y];
-            board[x][y] = DEL;
 
         }
     }
@@ -142,18 +166,16 @@ void autoPlay_rotation() {
 }
 
 void sol() {
-    grouping();
-    while(flag) {
-        flag = false;
+    while(grouping()) {
         autoPlay_deleting();
         autoPlay_gravity();
         autoPlay_rotation();
         autoPlay_gravity();
+
         memset(visited, false, sizeof(visited));
         groupMaxSize = -98765432;
         targetGroup.clear();
-        grouping();
-
+        rainbowMaxSize = -98765432;
     }
 
 

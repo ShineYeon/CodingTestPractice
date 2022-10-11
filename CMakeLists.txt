@@ -3,4 +3,4 @@ project(CodingTestPractice)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(CodingTestPractice 21609.cpp)
+add_executable(CodingTestPractice 20056.cpp)
